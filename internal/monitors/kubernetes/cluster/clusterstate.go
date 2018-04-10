@@ -17,7 +17,6 @@ import (
 // suited to our use case.
 type State struct {
 	clientset   *k8s.Clientset
-	indexers    map[string]cache.Indexer
 	controllers map[string]cache.Controller
 	stoppers    map[string]chan struct{}
 

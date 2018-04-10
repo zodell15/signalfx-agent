@@ -48,8 +48,8 @@ type Config struct {
 	config.MonitorConfig
 	// Kubelet kubeletClient configuration
 	KubeletAPI kubelet.APIConfig `yaml:"kubeletAPI" default:""`
-	// Configuration of the Kubernetes API kubeletClient
-	KubernetesAPI *kubernetes.APIConfig `yaml:"kubernetesAPI" default:"{}"`
+	// Configuration of the Kubernetes API client
+	KubernetesAPI kubernetes.APIConfig `yaml:"kubernetesAPI"`
 }
 
 // Monitor for K8s volume metrics as reported by kubelet
@@ -64,12 +64,12 @@ type Monitor struct {
 // Configure the monitor and kick off volume metric syncing
 func (m *Monitor) Configure(conf *Config) error {
 	var err error
-	m.kubeletClient, err = kubelet.NewClient(&conf.KubeletAPI)
+	m.kubeletClient, err = kubelet.NewClient(&conf.KubeletAPI, &conf.KubernetesAPI)
 	if err != nil {
 		return err
 	}
 
-	m.k8sClient, err = kubernetes.MakeClient(conf.KubernetesAPI)
+	m.k8sClient, err = kubernetes.MakeClient(&conf.KubernetesAPI)
 	if err != nil {
 		return err
 	}

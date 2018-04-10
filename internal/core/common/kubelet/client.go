@@ -8,12 +8,14 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/signalfx/signalfx-agent/internal/core/common/kubernetes"
 	log "github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // AuthType to use when connecting to kubelet
@@ -37,8 +39,11 @@ type APIConfig struct {
 	// `serviceAccount` to use the pod's default service account token to
 	// authenticate.
 	AuthType AuthType `yaml:"authType" default:"none"`
-	// Whether to skip verification of the Kubelet's TLS cert
-	SkipVerify bool `yaml:"skipVerify" default:"false"`
+	// If true, plain HTTP will be used instead of HTTPS.
+	UseHTTP bool `yaml:"useHTTP"`
+	// Whether to skip verification of the Kubelet's TLS cert.  This defaults
+	// to true when using an https kubelet URL (also the default)
+	SkipVerify *bool `yaml:"skipVerify"`
 	// Path to the CA cert that has signed the Kubelet's TLS cert, unnecessary
 	// if `skipVerify` is set to false.
 	CACertPath string `yaml:"caCertPath"`
@@ -59,22 +64,44 @@ type Client struct {
 }
 
 // NewClient creates a new client with the given config
-func NewClient(kubeletAPI *APIConfig) (*Client, error) {
+func NewClient(kubeletAPI *APIConfig, kubernetesAPIConf *kubernetes.APIConfig) (*Client, error) {
 	certs, err := x509.SystemCertPool()
 	if err != nil {
 		return nil, errors.Wrapf(err, "Could not load system x509 cert pool")
 	}
 
 	if kubeletAPI.URL == "" {
-		hostname, err := os.Hostname()
-		if err != nil {
-			return nil, err
+		var kubeletHostPort string
+		if kubernetesAPIConf != nil {
+			var err error
+			kubeletHostPort, err = determineNodeKubeletHostPort(kubernetesAPIConf)
+			if err != nil {
+				log.WithError(err).Error("Could not determine Kubelet URL from K8s API")
+			}
 		}
-		kubeletAPI.URL = fmt.Sprintf("https://%s:10250", hostname)
+		if kubeletHostPort == "" {
+			nodeName, err := kubernetes.NodeName()
+			if err != nil {
+				return nil, err
+			}
+			kubeletHostPort = nodeName + ":10250"
+		}
+
+		scheme := map[bool]string{
+			false: "https",
+			true:  "http",
+		}[kubeletAPI.UseHTTP]
+
+		kubeletAPI.URL = fmt.Sprintf("%s://%s", scheme, kubeletHostPort)
 	}
 
-	tlsConfig := &tls.Config{
-		InsecureSkipVerify: kubeletAPI.SkipVerify,
+	tlsConfig := &tls.Config{}
+
+	usingHTTPS := strings.HasPrefix(kubeletAPI.URL, "https")
+	// This is more or less what heapster does:
+	// https://github.com/kubernetes/heapster/blob/784a4b55e34060b622acc9442b0bd454644f5732/metrics/sources/kubelet/util/kubelet_client.go#L78
+	if kubeletAPI.CACertPath == "" && usingHTTPS && (kubeletAPI.SkipVerify == nil || *kubeletAPI.SkipVerify) {
+		tlsConfig.InsecureSkipVerify = true
 	}
 
 	var transport http.RoundTripper = &(*http.DefaultTransport.(*http.Transport))
@@ -180,4 +207,45 @@ func (kc *Client) DoRequestAndSetValue(req *http.Request, value interface{}) err
 		return fmt.Errorf("Failed to parse Kubelet output. Response: %q. Error: %v", string(body), err)
 	}
 	return nil
+}
+
+func determineNodeKubeletHostPort(k8sConf *kubernetes.APIConfig) (string, error) {
+	k8sClient, err := kubernetes.MakeClient(k8sConf)
+	if err != nil {
+		return "", err
+	}
+	myNodeName, err := kubernetes.NodeName()
+	if err != nil {
+		return "", err
+	}
+
+	node, err := k8sClient.CoreV1().Nodes().Get(myNodeName, metav1.GetOptions{})
+	port := node.Status.DaemonEndpoints.KubeletEndpoint.Port
+	if port == 0 {
+		port = 10250
+	}
+
+	var internalDNS string
+	var nodeHost string
+	var internalIP string
+	for _, a := range node.Status.Addresses {
+		if a.Type == corev1.NodeInternalDNS && a.Address != "" {
+			internalDNS = a.Address
+		} else if a.Type == corev1.NodeHostName && a.Address != "" {
+			nodeHost = a.Address
+		} else if a.Type == corev1.NodeInternalIP && a.Address != "" {
+			internalIP = a.Address
+		}
+	}
+
+	if internalIP != "" {
+		return fmt.Sprintf("%s:%d", internalIP, port), nil
+	} else if nodeHost != "" {
+		return fmt.Sprintf("%s:%d", nodeHost, port), nil
+	} else if internalDNS != "" {
+		return fmt.Sprintf("%s:%d", internalDNS, port), nil
+	}
+
+	// Let it default if we get here with nothing
+	return "", nil
 }

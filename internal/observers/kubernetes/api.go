@@ -6,7 +6,6 @@ package kubernetes
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"time"
 
@@ -27,7 +26,6 @@ var now = time.Now
 
 const (
 	observerType = "k8s-api"
-	nodeEnvVar   = "MY_NODE_NAME"
 	runningPhase = "Running"
 )
 
@@ -82,8 +80,8 @@ func (c *Config) Validate() error {
 		return err
 	}
 
-	if os.Getenv(nodeEnvVar) == "" {
-		return fmt.Errorf("K8s node name was not provided in the %s envvar", nodeEnvVar)
+	if _, err := kubernetes.NodeName(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -111,7 +109,7 @@ func (o *Observer) Configure(config *Config) error {
 		return nil
 	}
 
-	o.thisNode = os.Getenv(nodeEnvVar)
+	o.thisNode, _ = kubernetes.NodeName()
 
 	var err error
 	o.clientset, err = kubernetes.MakeClient(config.KubernetesAPI)

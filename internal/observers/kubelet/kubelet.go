@@ -130,7 +130,7 @@ func init() {
 // Configure the kubernetes observer/client
 func (k *Observer) Configure(config *Config) error {
 	var err error
-	k.client, err = kubelet.NewClient(&config.KubeletAPI)
+	k.client, err = kubelet.NewClient(&config.KubeletAPI, nil)
 	if err != nil {
 		return err
 	}

@@ -14,6 +14,7 @@ import (
 
 	info "github.com/google/cadvisor/info/v1"
 	"github.com/signalfx/signalfx-agent/internal/core/common/kubelet"
+	"github.com/signalfx/signalfx-agent/internal/core/common/kubernetes"
 	"github.com/signalfx/signalfx-agent/internal/core/config"
 	"github.com/signalfx/signalfx-agent/internal/monitors"
 	"github.com/signalfx/signalfx-agent/internal/monitors/types"
@@ -36,6 +37,9 @@ type KubeletStatsConfig struct {
 	config.MonitorConfig
 	// Kubelet client configuration
 	KubeletAPI kubelet.APIConfig `yaml:"kubeletAPI" default:""`
+	// Config for the K8s API client.  This is only used to determine this
+	// node's kubelet address from the API server.
+	KubernetesAPI *kubernetes.APIConfig `yaml:"kubernetesAPI"`
 }
 
 // KubeletStatsMonitor will pull container metrics from the /stats/ endpoint of
@@ -51,7 +55,7 @@ type KubeletStatsMonitor struct {
 
 // Configure the Kubelet Stats monitor
 func (ks *KubeletStatsMonitor) Configure(conf *KubeletStatsConfig) error {
-	client, err := kubelet.NewClient(&conf.KubeletAPI)
+	client, err := kubelet.NewClient(&conf.KubeletAPI, conf.KubernetesAPI)
 	if err != nil {
 		return err
 	}
