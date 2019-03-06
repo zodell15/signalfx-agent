@@ -50,6 +50,11 @@ monitors:
     password: mypassword
     databases:
     - name: mysql
+  - type: collectd/mongodb
+    host: localhost
+    port: 27017
+    databases:
+    - local
   - type: ecs-metadata
     labelsToDimensions:
       <<: *labelMap
