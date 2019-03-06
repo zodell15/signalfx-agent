@@ -34,6 +34,7 @@ monitors:
     host: 127.0.0.1
     port: 9200
   - type: collectd/zookeeper
+    host: localhost
     port: 2181
   - type: collectd/memcached
     host: 127.0.0.1
