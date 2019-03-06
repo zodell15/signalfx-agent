@@ -30,6 +30,14 @@ monitors:
   - type: collectd/signalfx-metadata
   - type: collectd/uptime
   - type: collectd/vmem
+  - type: collectd/elasticsearch
+    host: 127.0.0.1
+    port: 9200
+  - type: collectd/zookeeper
+    port: 6379
+  - type: collectd/memcached
+    host: 127.0.0.1
+    port: 11211
   - type: collectd/redis
     host: 127.0.0.1
     port: 6379
