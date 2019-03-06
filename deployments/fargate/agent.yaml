@@ -54,7 +54,7 @@ monitors:
     host: localhost
     port: 27017
     databases:
-    - local
+    - admin
   - type: ecs-metadata
     labelsToDimensions:
       <<: *labelMap
