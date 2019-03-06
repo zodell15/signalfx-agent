@@ -36,7 +36,11 @@ monitors:
   - type: collectd/apache
     host: localhost
     port: 80
-
+  - type: collectd/mysql
+    username: root
+    password: mypassword
+    databases:
+    - name: mysql
   - type: ecs-metadata
     labelsToDimensions:
       <<: *labelMap
