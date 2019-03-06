@@ -33,6 +33,9 @@ monitors:
   - type: collectd/redis
     host: 127.0.0.1
     port: 6379
+  - type: collectd/apache
+    host: localhost
+    port: 80
 
   - type: ecs-metadata
     labelsToDimensions:
