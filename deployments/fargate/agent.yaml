@@ -31,8 +31,7 @@ monitors:
   - type: collectd/uptime
   - type: collectd/vmem
   - type: collectd/elasticsearch
-    host: 127.0.0.1
-    port: 9200
+    discoveryRule: container_name =~ "elasticsearch" && port == 9200
   - type: collectd/zookeeper
     host: localhost
     port: 2181
