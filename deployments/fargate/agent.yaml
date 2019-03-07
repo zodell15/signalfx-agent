@@ -48,8 +48,6 @@ monitors:
     host: localhost
     port: 80
   - type: collectd/mysql
-    host: 127.0.0.1
-    port: 3306
     username: root
     password: SaQaTest
     databases: [{"name": "mysql", "username": "root", "password": "SaQaTest"}, {"name": "testdb"}]
@@ -94,6 +92,8 @@ monitors:
       expireDelay: 10
       sslMode: disable
   - type: ecs-metadata
+    enableExtraCPUMetrics: true
+    enableExtraMemoryMetrics: true
     labelsToDimensions:
       <<: *labelMap
 
