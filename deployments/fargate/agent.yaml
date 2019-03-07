@@ -48,6 +48,7 @@ monitors:
     host: localhost
     port: 80
   - type: collectd/mysql
+    discoveryRule: container_name =~ "mysql" && port == 3306
     username: root
     password: SaQaTest
     databases: [{"name": "mysql", "username": "root", "password": "SaQaTest"}, {"name": "testdb"}]
