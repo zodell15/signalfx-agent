@@ -52,8 +52,7 @@ monitors:
     port: 3306
     username: root
     password: SaQaTest
-    databases:
-    - name: mysql
+    databases: [{"name": "mysql", "username": "root", "password": "testing123"}]
   - type: collectd/mongodb
     host: localhost
     port: 27017
