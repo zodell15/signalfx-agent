@@ -58,10 +58,10 @@ monitors:
     databases:
     - admin
   - type: ecs-metadata
-    enableExtraBlockIOMetrics: true
-    enableExtraCPUMetrics: true
-    enableExtraMemoryMetrics: true
-    enableExtraNetworkMetrics: true
+    #enableExtraBlockIOMetrics: true
+    #enableExtraCPUMetrics: true
+    #enableExtraMemoryMetrics: true
+    #enableExtraNetworkMetrics: true
     labelsToDimensions:
       <<: *labelMap
 
