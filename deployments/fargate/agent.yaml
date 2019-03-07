@@ -70,6 +70,29 @@ monitors:
     collectExchanges: true
     collectNodes: true
     collectQueues: true
+  - type: collectd/postgresql
+    host: localhost
+    port: 5432
+    username: "username1"
+    password: "password1"
+    queries:
+    - name: "exampleQuery"
+      minVersion: 60203
+      maxVersion: 200203
+      statement: |
+        SELECT coalesce(sum(n_live_tup), 0) AS live, coalesce(sum(n_dead_tup), 0) AS dead FROM pg_stat_user_tables;
+      results:
+      - type: gauge
+        instancePrefix: live
+        valuesFrom:
+        - live
+    databases:
+    - name: test
+      username: "test_user"
+      password: "test_pwd"
+      interval: 5
+      expireDelay: 10
+      sslMode: disable
   - type: ecs-metadata
     labelsToDimensions:
       <<: *labelMap
