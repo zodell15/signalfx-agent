@@ -61,6 +61,15 @@ monitors:
   - type: collectd/redis
     host: localhost
     port: 6379
+  - type: collectd/rabbitmq
+    discoveryRule: container_name =~ "rabbitmq" && port == 15672
+    username: guest
+    password: guest
+    collectChannels: true
+    collectConnections: true
+    collectExchanges: true
+    collectNodes: true
+    collectQueues: true
   - type: ecs-metadata
     labelsToDimensions:
       <<: *labelMap
