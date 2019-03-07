@@ -49,7 +49,7 @@ monitors:
     port: 80
   - type: collectd/mysql
     username: root
-    password: mypassword
+    password: SaQaTest
     databases:
     - name: mysql
   - type: collectd/mongodb
