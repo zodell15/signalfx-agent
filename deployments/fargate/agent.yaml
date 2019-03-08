@@ -60,6 +60,8 @@ monitors:
   - type: collectd/redis
     host: localhost
     port: 6379
+  - type: collectd/kafka
+    discoveryRule: container_image =~ "kafka" && port == 7203
   - type: collectd/rabbitmq
     discoveryRule: container_name =~ "rabbitmq" && port == 15672
     username: guest
