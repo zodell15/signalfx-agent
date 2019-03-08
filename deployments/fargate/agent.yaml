@@ -97,6 +97,8 @@ monitors:
       interval: 5
       expireDelay: 10
       sslMode: disable
+  - type: collectd/nginx
+    discoveryRule: container_name =~ "nginx" && (port == 1234 || port == 4455 || port == 9500 || port == 80)
   - type: collectd/activemq
     host: localhost
     port: 1099
