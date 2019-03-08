@@ -61,7 +61,10 @@ monitors:
     host: localhost
     port: 6379
   - type: collectd/kafka
-    discoveryRule: container_name =~ "kafka" && port == 7203
+    host: localhost
+    port: 7203
+    clusterName: testCluster
+    #discoveryRule: container_name =~ "kafka" && port == 7203
   - type: collectd/rabbitmq
     discoveryRule: container_name =~ "rabbitmq" && port == 15672
     username: guest
