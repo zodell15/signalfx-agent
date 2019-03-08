@@ -92,6 +92,12 @@ monitors:
       interval: 5
       expireDelay: 10
       sslMode: disable
+    - type: collectd/activemq
+      host: localhost
+      port: 1099
+      serviceURL: service:jmx:rmi:///jndi/rmi://{host}:1099/jmxrmi
+      username: testuser
+      password: test123
   - type: ecs-metadata
     enableExtraCPUMetrics: true
     enableExtraMemoryMetrics: true
