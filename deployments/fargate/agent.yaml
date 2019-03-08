@@ -95,7 +95,7 @@ monitors:
     - type: collectd/activemq
       host: localhost
       port: 1099
-      serviceURL: service:jmx:rmi:///jndi/rmi://{host}:1099/jmxrmi
+      serviceURL: service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi
       username: testuser
       password: test123
   - type: ecs-metadata
