@@ -1,9 +1,12 @@
 monitors:
 - dimensions:
   doc: |
-    Collectd stats about network interfaces on the
-    system by using the [collectd interface
+    **This monitor is deprecated in favor of the `netio` monitor.**
+
+    Collects stats about network interfaces on the system by using the
+    [collectd interface
     plugin](https://collectd.org/wiki/index.php/Plugin:Interface).
+
   metrics:
     if_errors.rx:
       description: Count of receive errors on the interface

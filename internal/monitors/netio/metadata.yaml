@@ -7,6 +7,9 @@ monitors:
     If the underlying host's `/proc` file system is mounted somewhere other than
     /proc please specify the path using the top level configuration `procPath`.
 
+    This monitor is a replacement for the `collectd/interface` monitor, which
+    is deprecated.
+
     ```yaml
     procPath: /proc
     monitors:
