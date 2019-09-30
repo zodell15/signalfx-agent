@@ -3,7 +3,6 @@ package cpu
 import (
 	"context"
 	"fmt"
-	"runtime"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -186,9 +185,6 @@ func (m *Monitor) initializePerCoreCPUTimes() {
 // on a varied interval
 func (m *Monitor) Configure(conf *Config) error {
 	m.logger = logrus.WithFields(log.Fields{"monitorType": monitorType})
-	if runtime.GOOS != "windows" {
-		m.logger.Warningf("'%s' monitor is in beta on this platform.  For production environments please use 'collectd/%s'.", monitorType, monitorType)
-	}
 
 	// create contexts for managing the the plugin loop
 	var ctx context.Context
