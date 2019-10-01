@@ -53,19 +53,18 @@ data:
       {{- end }}
 
     monitors:
-    - type: collectd/cpu
-    - type: collectd/cpufreq
-    - type: collectd/df
+    - type: cpu
+    - type: filesystems
       hostFSPath: {{ .Values.hostFSPath }}
     - type: collectd/disk
-    - type: collectd/interface
+    - type: net-io
     - type: collectd/load
-    - type: collectd/memory
+    - type: memory
     - type: collectd/protocols
-    - type: collectd/signalfx-metadata
     - type: host-metadata
+    - type: processlist
     - type: collectd/uptime
-    - type: collectd/vmem
+    - type: vmem
 
     - type: kubelet-stats
       {{- if .Values.containerStatsIntervalSeconds }}

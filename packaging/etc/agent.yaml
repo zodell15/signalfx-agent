@@ -18,14 +18,12 @@ observers:
 monitors:
   - {"#from": "/etc/signalfx/monitors/*.yaml", flatten: true, optional: true}
   - type: host-metadata
-  - type: collectd/cpu
-  - type: collectd/cpufreq
-  - type: collectd/df
+  - type: cpu
+  - type: filesystems
   - type: collectd/disk
-  - type: collectd/interface
+  - type: net-io
   - type: collectd/load
-  - type: collectd/memory
-  - type: collectd/signalfx-metadata
-  - type: collectd/vmem
+  - type: memory
+  - type: vmem
 
 enableBuiltInFiltering: true
