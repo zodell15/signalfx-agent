@@ -1,0 +1,23 @@
+monitors:
+- dimensions:
+    source_id:
+      description: The source of the metric
+    instance_id:
+      description: The BOSH instance id that pertains to the metric, if any.
+  doc: |
+    This is a CloudFoundry [firehose
+    nozzle](https://docs.pivotal.io/tiledev/2-8/nozzle.html) by connecting to
+    the Cloud Foundry Reverse Log Proxy (RLP) Gateway that feeds metrics from
+    the Loggregator. This uses the new RLP Gateway model that was [introduced
+    in Pivotal Cloud Foundry (PCF)
+    2.4](https://docs.pivotal.io/tiledev/2-4/release-notes.html#log-api), so it
+    will not work with older releases.
+
+    It supports `gauge` and `counter` metrics at this time.  All of the `tags` in
+    the firehose envelopes will be converted to dimensions when sending to
+    SignalFx.
+  metrics:
+  sendAll: true
+  monitorType: pcf-firehose-nozzle
+  properties:
+

@@ -37134,6 +37134,88 @@
       "singleInstance": false
     },
     {
+      "monitorType": "pcf-firehose-nozzle",
+      "sendAll": true,
+      "dimensions": {
+        "instance_id": {
+          "description": "The BOSH instance id that pertains to the metric, if any."
+        },
+        "source_id": {
+          "description": "The source of the metric"
+        }
+      },
+      "doc": "This is a CloudFoundry [firehose\nnozzle](https://docs.pivotal.io/tiledev/2-8/nozzle.html) by connecting to\nthe Cloud Foundry Reverse Log Proxy (RLP) Gateway that feeds metrics from\nthe Loggregator. This uses the new RLP Gateway model that was [introduced\nin Pivotal Cloud Foundry (PCF)\n2.4](https://docs.pivotal.io/tiledev/2-4/release-notes.html#log-api), so it\nwill not work with older releases.\n\nIt supports `gauge` and `counter` metrics at this time.  All of the `tags` in\nthe firehose envelopes will be converted to dimensions when sending to\nSignalFx.\n",
+      "groups": {},
+      "metrics": null,
+      "properties": null,
+      "metricsExhaustive": false,
+      "config": {
+        "name": "Config",
+        "doc": "Config for this monitor",
+        "package": "pkg/monitors/cloudfoundry",
+        "fields": [
+          {
+            "yamlName": "rlpGatewayUrl",
+            "doc": "The base URL to the RLP Gateway server. This is quite often of the form https://log-stream.\u003cCLOUD CONTROLLER SYSTEM DOMAIN\u003e if using PCF 2.4+.",
+            "default": "",
+            "required": false,
+            "type": "string",
+            "elementKind": ""
+          },
+          {
+            "yamlName": "rlpGatewaySkipVerify",
+            "doc": "Whether to skip SSL/TLS verification when using HTTPS to connect to the RLP Gateway",
+            "default": false,
+            "required": false,
+            "type": "bool",
+            "elementKind": ""
+          },
+          {
+            "yamlName": "uaaUser",
+            "doc": "The UAA username for a user that has the appropriate authority to fetch logs from the firehose (usually the `logs.admin` authority)",
+            "default": "",
+            "required": false,
+            "type": "string",
+            "elementKind": ""
+          },
+          {
+            "yamlName": "uaaPassword",
+            "doc": "The password for the above UAA user",
+            "default": "",
+            "required": false,
+            "type": "string",
+            "elementKind": ""
+          },
+          {
+            "yamlName": "uaaUrl",
+            "doc": "The URL to the UAA server. This monitor will obtain an access token from this server that it will use to authenticate with the RLP Gateway.",
+            "default": "",
+            "required": false,
+            "type": "string",
+            "elementKind": ""
+          },
+          {
+            "yamlName": "uaaSkipVerify",
+            "doc": "Whether to skip SSL/TLS verification when using HTTPS to connect to the UAA server",
+            "default": false,
+            "required": false,
+            "type": "bool",
+            "elementKind": ""
+          },
+          {
+            "yamlName": "shardId",
+            "doc": "The nozzle's shard id.  All nozzle instances with the same id will receive an exclusive subset of the data from the firehose. The default should suffice in the vast majority of use cases.",
+            "default": "signalfx_nozzle",
+            "required": false,
+            "type": "string",
+            "elementKind": ""
+          }
+        ]
+      },
+      "acceptsEndpoints": false,
+      "singleInstance": false
+    },
+    {
       "monitorType": "postgresql",
       "sendAll": false,
       "dimensions": {

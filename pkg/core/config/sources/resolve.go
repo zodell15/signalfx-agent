@@ -2,6 +2,7 @@ package sources
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -56,7 +57,7 @@ func (r *resolver) Resolve(raw RawDynamicValueSpec) ([]interface{}, string, *dyn
 func convertFileBytesToValues(content map[string][]byte, raw bool) ([]interface{}, error) {
 	var out []interface{}
 	for path := range content {
-		if len(content[path]) == 0 {
+		if len(strings.TrimSpace(string(content[path]))) == 0 {
 			continue
 		}
 
